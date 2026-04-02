@@ -23,7 +23,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=5001
-      - MONGO_URI=mongodb://mongodb:27017/expense_manager # ← THIS WAS THE FIX
+      - MONGO_URI=mongodb://mongodb:27017/expense_manager
 
   frontend:
     build:
