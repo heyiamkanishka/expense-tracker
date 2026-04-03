@@ -137,7 +137,7 @@ function App() {
       {/* Left side: Form & Stats */}
       <div className="left-panel">
         <h1 className="header-title">
-          <Wallet size={32} color="#3b82f6" /> Finance Manager
+          <Wallet size={32} color="#3b82f6" /> What is my money doing?
         </h1>
 
         <div className="stats-container">
