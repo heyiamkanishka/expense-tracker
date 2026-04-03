@@ -137,7 +137,7 @@ function App() {
       {/* Left side: Form & Stats */}
       <div className="left-panel">
         <h1 className="header-title">
-          <Wallet size={32} color="#3b82f6" /> Expense Manager
+          <Wallet size={32} color="#3b82f6" /> Finance Manager
         </h1>
 
         <div className="stats-container">
@@ -268,7 +268,7 @@ function App() {
                   <div className="expense-details">
                     <h4>{exp.description || exp.category}</h4>
                     <p>
-                      {new Date(exp.date).toLocaleDateString()} at {new Date(exp.createdAt || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} • {exp.category}
+                      {new Date(exp.date).toLocaleDateString()} at {new Date(exp.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {exp.category}
                     </p>
                   </div>
                 </div>
