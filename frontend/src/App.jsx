@@ -101,11 +101,12 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = { ...formData, amount: Math.round(parseFloat(formData.amount) * 100) / 100 };
       if (editingId) {
-        await axios.put(`/api/expenses/${editingId}`, formData);
+        await axios.put(`/api/expenses/${editingId}`, payload);
         setEditingId(null);
       } else {
-        await axios.post('/api/expenses', formData);
+        await axios.post('/api/expenses', payload);
       }
       fetchExpenses();
       setFormData({
@@ -156,7 +157,7 @@ function App() {
   const handleAddBudget = (e) => {
     e.preventDefault();
     if (!budgetForm.limit || isNaN(budgetForm.limit)) return;
-    setBudgets({ ...budgets, [budgetForm.category]: parseFloat(budgetForm.limit) });
+    setBudgets({ ...budgets, [budgetForm.category]: Math.round(parseFloat(budgetForm.limit) * 100) / 100 });
     setBudgetForm({ ...budgetForm, limit: '' });
   };
 
@@ -213,19 +214,19 @@ function App() {
               <div className="stat-card">
                 <span className="stat-title">Balance</span>
                 <span className="stat-value" style={{ color: balance >= 0 ? 'var(--income-color)' : 'var(--expense-color)' }}>
-                  ${balance.toFixed(2)}
+                  LKR {balance.toFixed(2)}
                 </span>
               </div>
               <div className="stat-card">
                 <span className="stat-title">Income</span>
                 <span className="stat-value amount-income">
-                  ${income.toFixed(2)}
+                  LKR {income.toFixed(2)}
                 </span>
               </div>
               <div className="stat-card">
                 <span className="stat-title">Expense</span>
                 <span className="stat-value amount-expense">
-                  ${expense.toFixed(2)}
+                  LKR {expense.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -259,7 +260,7 @@ function App() {
                 </div>
 
                 <div className="form-group">
-                  <label>Amount ($)</label>
+                  <label>Amount (LKR)</label>
                   <input
                     type="number"
                     name="amount"
@@ -343,7 +344,7 @@ function App() {
                     </div>
                     <div className="expense-item-right">
                       <span className={`expense-amount ${exp.type === 'Income' ? 'amount-income' : 'amount-expense'}`}>
-                        {exp.type === 'Income' ? '+' : '-'}${exp.amount.toFixed(2)}
+                        {exp.type === 'Income' ? '+' : '-'}LKR {exp.amount.toFixed(2)}
                       </span>
                       <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
@@ -393,7 +394,7 @@ function App() {
                       <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
+                  <Tooltip formatter={(value) => `LKR ${value.toFixed(2)}`} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -421,7 +422,7 @@ function App() {
               </select>
             </div>
             <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-              <label>Limit ($)</label>
+              <label>Limit (LKR)</label>
               <input
                 type="number"
                 min="1"
@@ -451,7 +452,7 @@ function App() {
                       <span className="budget-name">{cat}</span>
                       <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                         <span className="budget-amounts">
-                          ${spent.toFixed(2)} / ${limit.toFixed(2)}
+                          LKR {spent.toFixed(2)} / LKR {limit.toFixed(2)}
                         </span>
                         <button className="btn-icon" onClick={() => handleDeleteBudget(cat)} title="Remove budget"><X size={16}/></button>
                       </div>
@@ -462,7 +463,7 @@ function App() {
                         style={{ width: `${percent}%` }}
                       ></div>
                     </div>
-                    {isExceeding && <small style={{ color: 'var(--tube-red-bg)', marginTop: '0.25rem', display: 'block' }}>Exceeded limit by ${(spent - limit).toFixed(2)}!</small>}
+                    {isExceeding && <small style={{ color: 'var(--tube-red-bg)', marginTop: '0.25rem', display: 'block' }}>Exceeded limit by LKR {(spent - limit).toFixed(2)}!</small>}
                   </div>
                 );
               })
