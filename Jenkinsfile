@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         DOCKERHUB_CRED = credentials('dockerhub-cred')
-        IMAGE_BE       = 'heyiamkanishka/expense-tracker-backend'
-        IMAGE_FE       = 'heyiamkanishka/expense-tracker-frontend'
+        IMAGE_BE       = 'bhanukanishka/expense-tracker-backend'   # your Docker Hub username
+        IMAGE_FE       = 'bhanukanishka/expense-tracker-frontend'
         TAG            = "${env.BUILD_NUMBER}"
     }
 
@@ -33,7 +33,7 @@ pipeline {
 
         stage('Build Docker Images') {
             steps {
-                echo '🏗️ Building Docker images with nginx proxy...'
+                echo '🏗️ Building Docker images...'
                 sh 'docker-compose build --no-cache'
             }
         }
@@ -43,25 +43,25 @@ pipeline {
                 echo '🔐 Logging into Docker Hub...'
                 sh "echo ${DOCKERHUB_CRED_PSW} | docker login -u ${DOCKERHUB_CRED_USR} --password-stdin"
 
-                // Push backend
-                sh "docker tag expense-tracker-backend:latest ${IMAGE_BE}:${TAG}"
-                sh "docker tag expense-tracker-backend:latest ${IMAGE_BE}:latest"
+                // Backend
+                sh "docker tag expensetracker_backend:latest ${IMAGE_BE}:${TAG}"
+                sh "docker tag expensetracker_backend:latest ${IMAGE_BE}:latest"
                 sh "docker push ${IMAGE_BE}:${TAG}"
                 sh "docker push ${IMAGE_BE}:latest"
 
-                // Push frontend
-                sh "docker tag expense-tracker-frontend:latest ${IMAGE_FE}:${TAG}"
-                sh "docker tag expense-tracker-frontend:latest ${IMAGE_FE}:latest"
+                // Frontend
+                sh "docker tag expensetracker_frontend:latest ${IMAGE_FE}:${TAG}"
+                sh "docker tag expensetracker_frontend:latest ${IMAGE_FE}:latest"
                 sh "docker push ${IMAGE_FE}:${TAG}"
                 sh "docker push ${IMAGE_FE}:latest"
 
-                echo '🚀 Images successfully pushed to Docker Hub'
+                echo '🚀 Images pushed to Docker Hub successfully!'
             }
         }
 
         stage('Deploy to Staging Server') {
             steps {
-                echo '🚀 Deploying to EC2 staging...'
+                echo '🚀 Deploying to EC2...'
                 sh '''
                     docker-compose down
                     docker-compose pull
@@ -74,7 +74,7 @@ pipeline {
 
     post {
         success {
-            echo '🎉 Pipeline finished successfully! App is live on http://16.16.212.80:3000'
+            echo '🎉 Pipeline succeeded! App is live at http://16.16.212.80:3000'
         }
         failure {
             echo '❌ Pipeline failed'
