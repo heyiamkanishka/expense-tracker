@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-  Plus, 
-  Trash2, 
-  Wallet, 
-  TrendingUp, 
+import {
+  Plus,
+  Trash2,
+  Wallet,
+  TrendingUp,
   TrendingDown,
   ShoppingBag,
   Bus,
@@ -16,7 +16,8 @@ import {
 } from 'lucide-react';
 import './index.css';
 
-const API_URL = 'http://localhost:5001/api/expenses';
+//const API_URL = 'http://localhost:5001/api/expenses';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 const CATEGORIES = [
   'Food',
@@ -147,7 +148,7 @@ function App() {
                 required
               />
             </div>
-            
+
             <div className="form-group">
               <label>Type</label>
               <select
@@ -212,7 +213,7 @@ function App() {
       {/* Right side: List */}
       <div className="right-panel">
         <h2 style={{ marginBottom: '1.5rem', marginTop: '0.5rem' }}>History</h2>
-        
+
         {expenses.length === 0 ? (
           <div className="glass-card empty-state">
             <Wallet size={48} opacity={0.5} />
@@ -235,8 +236,8 @@ function App() {
                   <span className={`expense-amount ${exp.type === 'Income' ? 'amount-income' : 'amount-expense'}`}>
                     {exp.type === 'Income' ? '+' : '-'}${exp.amount.toFixed(2)}
                   </span>
-                  <button 
-                    onClick={() => handleDelete(exp._id)} 
+                  <button
+                    onClick={() => handleDelete(exp._id)}
                     className="btn-icon"
                     title="Delete"
                   >
