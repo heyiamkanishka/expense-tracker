@@ -57,22 +57,17 @@ function App() {
 
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get(API_URL);
+      const response = await axios.get(`${API_URL}/api/expenses`);
       setExpenses(response.data);
     } catch (error) {
       console.error('Error fetching expenses:', error);
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(API_URL, formData);
+      await axios.post(`${API_URL}/api/expenses`, formData);
       fetchExpenses();
       setFormData({
         date: new Date().toISOString().split('T')[0],
@@ -88,7 +83,7 @@ function App() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      await axios.delete(`${API_URL}/api/expenses/${id}`);
       fetchExpenses();
     } catch (error) {
       console.error('Error deleting expense:', error);
