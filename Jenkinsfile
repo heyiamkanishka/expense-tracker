@@ -43,13 +43,11 @@ pipeline {
                 echo '🔐 Logging into Docker Hub...'
                 sh "echo ${DOCKERHUB_CRED_PSW} | docker login -u ${DOCKERHUB_CRED_USR} --password-stdin"
 
-                // Backend
                 sh "docker tag expensetracker_backend:latest ${IMAGE_BE}:${TAG}"
                 sh "docker tag expensetracker_backend:latest ${IMAGE_BE}:latest"
                 sh "docker push ${IMAGE_BE}:${TAG}"
                 sh "docker push ${IMAGE_BE}:latest"
 
-                // Frontend
                 sh "docker tag expensetracker_frontend:latest ${IMAGE_FE}:${TAG}"
                 sh "docker tag expensetracker_frontend:latest ${IMAGE_FE}:latest"
                 sh "docker push ${IMAGE_FE}:${TAG}"
@@ -63,7 +61,9 @@ pipeline {
             steps {
                 echo '🚀 Deploying to EC2...'
                 sh '''
-                    docker-compose down
+                    # Strong cleanup to avoid container name conflicts
+                    docker-compose down --remove-orphans || true
+                    docker rm -f mongo-me-rn backend-me-rn frontend-me-rn || true
                     docker-compose pull
                     docker-compose up -d --force-recreate
                 '''
