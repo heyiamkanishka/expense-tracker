@@ -16,7 +16,6 @@ import {
 } from 'lucide-react';
 import './index.css';
 
-
 const CATEGORIES = [
   'Food',
   'Transport',
@@ -60,6 +59,11 @@ function App() {
     } catch (error) {
       console.error('Error fetching expenses:', error);
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
