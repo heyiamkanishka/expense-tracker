@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CRED = credentials('dockerhub-cred')
-        IMAGE_BE       = 'bhanukanishka/expense-tracker-backend'   # your Docker Hub username
+        IMAGE_BE       = 'bhanukanishka/expense-tracker-backend'
         IMAGE_FE       = 'bhanukanishka/expense-tracker-frontend'
         TAG            = "${env.BUILD_NUMBER}"
     }
