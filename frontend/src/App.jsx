@@ -12,7 +12,9 @@ import {
   HeartPulse,
   Zap,
   MoreHorizontal,
-  Coffee
+  Coffee,
+  Edit2,
+  X
 } from 'lucide-react';
 import './index.css';
 
@@ -40,6 +42,7 @@ const categoryIcons = {
 
 function App() {
   const [expenses, setExpenses] = useState([]);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
     type: 'Expense',
@@ -69,7 +72,12 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/expenses', formData);
+      if (editingId) {
+        await axios.put(`/api/expenses/${editingId}`, formData);
+        setEditingId(null);
+      } else {
+        await axios.post('/api/expenses', formData);
+      }
       fetchExpenses();
       setFormData({
         date: new Date().toISOString().split('T')[0],
@@ -79,8 +87,30 @@ function App() {
         description: ''
       });
     } catch (error) {
-      console.error('Error adding expense:', error);
+      console.error('Error saving expense:', error);
     }
+  };
+
+  const handleEdit = (exp) => {
+    setEditingId(exp._id);
+    setFormData({
+      date: new Date(exp.date).toISOString().split('T')[0],
+      type: exp.type,
+      amount: exp.amount,
+      category: exp.category,
+      description: exp.description || ''
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setFormData({
+      date: new Date().toISOString().split('T')[0],
+      type: 'Expense',
+      amount: '',
+      category: 'Food',
+      description: ''
+    });
   };
 
   const handleDelete = async (id) => {
@@ -132,7 +162,7 @@ function App() {
         </div>
 
         <div className="glass-card">
-          <h3>Add Transaction</h3>
+          <h3>{editingId ? 'Edit Transaction' : 'Add Transaction'}</h3>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label>Date</label>
@@ -200,9 +230,20 @@ function App() {
               />
             </div>
 
-            <button type="submit" className="btn btn-primary">
-              <Plus size={20} /> Add Transaction
-            </button>
+            {editingId ? (
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
+                  <Edit2 size={20} /> Update
+                </button>
+                <button type="button" className="btn" style={{ flex: 1, backgroundColor: 'var(--card-bg)', color: 'var(--text-main)', border: '1px solid var(--card-border)' }} onClick={handleCancelEdit}>
+                  <X size={20} /> Cancel
+                </button>
+              </div>
+            ) : (
+              <button type="submit" className="btn btn-primary">
+                <Plus size={20} /> Add Transaction
+              </button>
+            )}
           </form>
         </div>
       </div>
@@ -226,20 +267,31 @@ function App() {
                   </div>
                   <div className="expense-details">
                     <h4>{exp.description || exp.category}</h4>
-                    <p>{new Date(exp.date).toLocaleDateString()} • {exp.category}</p>
+                    <p>
+                      {new Date(exp.date).toLocaleDateString()} at {new Date(exp.createdAt || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} • {exp.category}
+                    </p>
                   </div>
                 </div>
                 <div className="expense-item-right">
                   <span className={`expense-amount ${exp.type === 'Income' ? 'amount-income' : 'amount-expense'}`}>
                     {exp.type === 'Income' ? '+' : '-'}${exp.amount.toFixed(2)}
                   </span>
-                  <button
-                    onClick={() => handleDelete(exp._id)}
-                    className="btn-icon"
-                    title="Delete"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      onClick={() => handleEdit(exp)}
+                      className="btn-icon"
+                      title="Edit"
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(exp._id)}
+                      className="btn-icon"
+                      title="Delete"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
